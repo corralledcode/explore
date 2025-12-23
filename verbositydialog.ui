@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VerbosityDialog</class>
+ <widget class="QDialog" name="VerbosityDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>879</width>
+    <height>659</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QListWidget" name="verbosityListWidget">
+     <property name="focusPolicy">
+      <enum>Qt::FocusPolicy::WheelFocus</enum>
+     </property>
+     <item>
+      <property name="text">
+       <string>rt</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>cmp</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>enum</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>fp</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>vrunt</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>vappend</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Mantel</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Fp</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>srm</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FpMin</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>fpnone</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>set</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>allcrit</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>allmeas</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>alltally</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>strmeas</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>measg</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>randomizer</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>db</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>crit</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>min</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>graphs</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>i=minimal3.cfg</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>i=minimal2.cfg</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>i=minmal.cfg</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>allcrit</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>sets</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>allsets</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>alltuples</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>rtverbosity</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Iso</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Noiso</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>60</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>60</height>
+      </size>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>VerbosityDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>VerbosityDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -143,6 +143,10 @@ int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName )
     if (inputFile.is_open()) { // The 'is_open()' function or '!' operator can be used
         // Read the file line by line using std::getline()
         while (std::getline(inputFile, line)) {
+            if (line.empty())
+                while (line.empty() && std::getline(inputFile,line))
+                    ;
+
             // Print each line to the console
             // std::cout << line << std::endl;
             QTreeWidgetItem *childItem = nullptr;
@@ -160,7 +164,17 @@ int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName )
                 childItem = new QTreeWidgetItem();
                 childItem->setText(0,accumulatestring.c_str());
             }
-            if (line.size() > 0) {
+            if (line.empty())
+                while (line.empty() && std::getline(inputFile,line))
+                    ;
+            if (!line.empty()) {
+                std::string temp;
+                while (line[line.size()-1] == '\\') {
+                    if (!std::getline(inputFile, temp))
+                        break;
+                    line.append( " ");
+                    line.append(temp);
+                }
                 if (!childItem)
                     childItem = new QTreeWidgetItem();
                 childItem->setText(1,line.c_str());

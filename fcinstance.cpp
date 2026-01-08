@@ -324,6 +324,9 @@ void fcinstance::reverseparse(const std::string& command) {
                         } else if (args2[n].first[0] == 'i') {
                             mt = mtdiscrete;
                             queries[p] = (args2[n].second);
+                        } else if (args2[n].first[0] == 'z') {
+                            mt = mtdiscrete;
+                            queries[p] = (args2[n].second);
                         } else if (args2[n].first[0] == 'm') {
                             mt = mtcontinuous;
                             queries[p] = (args2[n].second);
@@ -566,6 +569,9 @@ void fcinstanceQtbridge::passparameterstowidgets() {
     ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr1edit")->document()->setPlainText(fc.queries[0].c_str());
     ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr2edit")->document()->setPlainText(fc.queries[1].c_str());
     ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr3edit")->document()->setPlainText(fc.queries[2].c_str());
+    for (auto s : measuretypestrings)
+        if (s.second == fc.mt)
+            ui->querytabs->currentWidget()->findChild<QComboBox*>("mtcombobox")->setCurrentText(s.first.c_str());
 
 
 

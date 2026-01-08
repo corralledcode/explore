@@ -8,6 +8,15 @@
 #include <regex>
 
 enum measuretype { mtbool, mtdiscrete, mtcontinuous, mtset, mttuple, mtstring, mtgraph, mtuncast };
+inline const std::map<std::string, measuretype>& measuretypestrings
+{{"mtbool", mtbool},
+{"mtdiscrete", mtdiscrete},
+{"mtcontinuous", mtcontinuous},
+{"mtset", mtset},
+{"mttuple", mttuple},
+{"mtstring", mtstring},
+{"mtgraph", mtgraph},
+{"mtuncast", mtuncast}};
 
 #define LONGINT long int
 #define FLAGCALCEXECUTABLEPATH "~/CLionProjects/flagcalc/cmake-build-debug/flagcalc"
@@ -123,6 +132,21 @@ inline const std::map<std::string,formulaoperator> stringoperatorsmap
 
 // ---
 
+inline const std::vector<std::string> measures
+    {"abs","acos", "asin", "atan", "atan2", "bell", "ceil", "cos", "exp", "floor", "gamma",
+    "isinf", "log", "log10", "log2", "logb","mod","nchoosek", "phi", "pi", "sin", "sqrt", "stirling",
+    "tan",
+    "truec","cr1","forestc", "treec", "Knc", "connc", "radiusc", "circc", "diamc", "conn1c",
+    "kconnc","ledgeconnc","ac", "ec", "eadjc", "bipc", "Nssc", "Separatesc", "connvssc",
+    "connvc", "connvsc", "indnc", "nwisec", "toBool", "embedsc", "connvusingsetc",
+    "dm", "legacygirthm", "cliquem", "connm", "radiusm", "circm", "lcircm","diamm", "girthm", "toReal",
+    "dimm", "edgecm","deltam", "Deltam", "Knt", "indnt", "cyclet", "kappat", "lambdat", "vdt",
+    "st", "lt", "pct", "idxt", "Nt", "cyclesvt", "Chit", "Chigreedyt", "Chiprimet", "Chiprimegreedyt",
+    "Nsst", "cyclest", "toInt", "connt", "V", "Ps", "Sizedsubset", "NN", "Nulls", "E",
+    "idxs", "TupletoSet", "Pathss", "Cyclesvs", "Setpartition", "nE", "Cycless", "Perms",
+    "Componentss", "Edgess", "Automs", "Connc", "Ns", "Choices", "Choice2s", "as", "eadjs",
+    "e2eadjs", "Epathss", "Pathsusingvsets", "Maps", "Gpathss", "Chip", "Chigreedyp", "Sp",
+    "nwalksbetweenp", "Connv", "Connmatrix", "Subp", "CUDAnwalksbetweenp", "CUDAconnv"};
 
 inline void openexternaleditor( QObject* sender, const QString& fn ) {
     QProcess *process = new QProcess(sender);
@@ -163,8 +187,13 @@ inline std::vector<std::string> parse_quoted_string(const std::string& input) {
     std::string current_token;
     bool inside_quotes = false;
 
+    bool escaped = false;
     for (char c : input) {
-        if (c == '"') {
+        if (c == '\\') {
+            escaped = true;
+            continue;
+        }
+        if (c == '"' && !escaped) {
             inside_quotes = !inside_quotes;
             // Optional: you can choose to include the quote in the token or not
             // current_token += c;
@@ -176,6 +205,7 @@ inline std::vector<std::string> parse_quoted_string(const std::string& input) {
         } else {
             current_token += c;
         }
+        escaped = false;
     }
     // Add the last token if it's not empty
     if (!current_token.empty()) {

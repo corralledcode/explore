@@ -29,6 +29,19 @@ MyHighlighter::MyHighlighter(QPlainTextEdit *p)
         highlightingRules.append(rule);
     }
 
+    keywordPatterns = {};
+    foreach (const auto &measurestring, measures) {
+        std::string keyword = "\\b" + measurestring + "\\b";
+        keywordPatterns.append( QtPrivate::convertToQString(keyword));
+    }
+
+    keywordFormat.setForeground(Qt::magenta);
+    foreach (const QString &pattern, keywordPatterns) {
+        rule.pattern = QRegularExpression(pattern);
+        rule.format = keywordFormat;
+        highlightingRules.append(rule);
+    }
+
     baseformat = p->currentCharFormat();
 
     // Add other rules (e.g., comments, strings, etc.)

@@ -660,14 +660,42 @@ void fcinstanceQtbridge::populatefcparameters() {
     auto query = tab->findChild<QPlainTextEdit*>("queryedit")->toPlainText().toStdString();
 
     fc.queries.clear();
-    if (cr1 != "")
-        fc.queries.push_back(cr1);
-    if (cr2 != "")
-        fc.queries.push_back(cr2);
-    if (cr3 != "")
-        fc.queries.push_back(cr3);
-    if (query != "")
-        fc.queries.push_back(query);
+    if (cr1 != "") {
+        std::string s {};
+        for (auto c : cr1)
+            if (c == '"')
+                s.append("\\\"");
+            else
+                s.push_back(c);
+        fc.queries.push_back(s);
+    }
+    if (cr2 != "") {
+        std::string s {};
+        for (auto c : cr2)
+            if (c == '"')
+                s.append("\\\"");
+            else
+                s.push_back(c);
+        fc.queries.push_back(s);
+    }
+    if (cr3 != "") {
+        std::string s {};
+        for (auto c : cr3)
+            if (c == '"')
+                s.append("\\\"");
+            else
+                s.push_back(c);
+        fc.queries.push_back(s);
+    }
+    if (query != "") {
+        std::string s {};
+        for (auto c : query)
+            if (c == '"')
+                s.append("\\\"");
+            else
+                s.push_back(c);
+        fc.queries.push_back(s);
+    }
 }
 
 int fcinstanceQtbridge::logQuery() {

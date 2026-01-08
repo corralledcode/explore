@@ -584,10 +584,25 @@ void MainWindow::onmovequerybuttonClicked() {
             addNewQueryTab();
             auto s = selected->data(1,Qt::DisplayRole).toString().toStdString();
             // std::cout << s << std::endl;
+            auto commenttext = selected->data(0,Qt::DisplayRole).toString();
+            if (commenttext.size() > 0)
+                if (commenttext[0] == "#")
+                    commenttext.removeFirst();
+            while (commenttext.size() > 0 && commenttext[0] == " ")
+                commenttext.removeFirst();
+
+            ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("commenttextedit")->setPlainText(commenttext);
             fcbridges[fcbridges.size()-1]->fc.reverseparse(s);
             fcbridges[fcbridges.size()-1]->passparameterstowidgets();
             currentqueryedit = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("queryedit");
+            currentcr1edit = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr1edit");
+            currentcr2edit = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr2edit");
+            currentcr3edit = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr3edit");
+
             logsyntaxhighlightchange(currentqueryedit);
+            logsyntaxhighlightchange(currentcr1edit);
+            logsyntaxhighlightchange(currentcr2edit);
+            logsyntaxhighlightchange(currentcr3edit);
 
         }
     }

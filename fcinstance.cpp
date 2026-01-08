@@ -164,6 +164,8 @@ void fcinstance::reverseparse(const std::string& command) {
     rgs.push_back("r4");
     rgs.push_back("r5");
 
+    std::string comment {};
+
     auto args = parse_quoted_string(command);
     auto args2 = cmdlineparseiterationtwo(args);
     // for (auto a : args2)
@@ -296,7 +298,7 @@ void fcinstance::reverseparse(const std::string& command) {
                     if (args2[n].first != "default")
                         if (args2[n].first.size() > 1)
                             try {
-                                p = stoi(args2[n].first.substr(1,args2[n].second.length()));
+                                p = stoi(args2[n].first.substr(1,args2[n].second.length())) - 1;
                             } catch (const std::invalid_argument& e) {
                                 p = 0;
                             }

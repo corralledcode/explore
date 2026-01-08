@@ -178,14 +178,14 @@ void fcinstance::reverseparse(const std::string& command) {
         if (p.first == "default") {
             if (p.second == "-d" && n+1 < args2.size()) {
                 p = args2[++n];
-                while (n < args2.size() && p.second.size() > 0 && p.second[0] != '-') {
+                while (n < args2.size() && p.second.size() > 0 && !(p.first == "default" && p.second[0] == '-')) {
                     if (p.first == "f")
                     {
                         inlinegraphs.push_back(p.second);
                     }
                     p = args2[++n];
                 }
-                if (!p.second.empty() && p.second[0] == '-') {
+                if (!(p.first == "default" && !p.second.empty() && p.second[0] == '-')) {
                     --n;
                     p = args2[n];
                 } else {
@@ -236,7 +236,8 @@ void fcinstance::reverseparse(const std::string& command) {
                     cnt = std::stoi(args2[n+2].second);
                 }
 
-                for (int i = n; i < args2.size(); ++i) {
+                int i;
+                for (i = n; i < args2.size(); ++i) {
                     if (args2[i].first == "default" && !args2[i].second.empty() && args2[i].second[0] == '-')
                         break;
                     if (args2[i].first == "default" || args2[i].first == "r") {
@@ -289,7 +290,7 @@ void fcinstance::reverseparse(const std::string& command) {
                 r.dim = dim;
                 r.name = rgs[rgsidx];
                 randomizers.push_back(r);
-            } else if (p.second == "-a") {
+            } else if (p.second == "-a" && n+1 < args2.size()) {
 
                 n++;
                 queries.resize(GLOBALCRITCOUNT+1);
@@ -330,6 +331,9 @@ void fcinstance::reverseparse(const std::string& command) {
                         } else if (args2[n].first[0] == 'm') {
                             mt = mtcontinuous;
                             queries[p] = (args2[n].second);
+                        } else if (args2[n].first == "gm") {
+                            mt = mtgraph;
+                            queries[p] = (args2[n].second);
                         } else if (args2[n].first == "ipy")
                             pythonfilenames.push_back(args2[n].second);
                         else if (args2[n].first == "isp")
@@ -337,8 +341,23 @@ void fcinstance::reverseparse(const std::string& command) {
 
                     n++;
                 }
-
+                if (!p.second.empty() && p.second[0] == '-') {
+                    --n;
+                }
+            } else if (p.second == "-v" && n+1 < args2.size()) {
+                p = args2[++n];
+                while (n < args2.size() && !(args2[n].first == "default" && args2[n].second.size() > 0 && args2[n].second[0] == '-' )) {
+                    if (args2[n].first == "i")
+                        verbosityfilenames.push_back(args2[n].second);
+                    else
+                        verbositylevels.push_back(args2[n].second);
+                    n++;
+                }
+                if (!p.second.empty() && p.second[0] == '-') {
+                    --n;
+                }
             }
+
         }
         ++n;
     }
@@ -572,9 +591,18 @@ void fcinstanceQtbridge::passparameterstowidgets() {
     for (auto s : measuretypestrings)
         if (s.second == fc.mt)
             ui->querytabs->currentWidget()->findChild<QComboBox*>("mtcombobox")->setCurrentText(s.first.c_str());
-
-
-
+    std::string temp {};
+    for (auto v : fc.verbositylevels) {
+        if (temp != "")
+            temp.append("; ");
+        temp.append(v);
+    }
+    for (auto vf : fc.verbosityfilenames) {
+        if (temp != "")
+            temp.append("; ");
+        temp.append("i=\"" + vf+"\"");
+    }
+    ui->querytabs->currentWidget()->findChild<QComboBox*>("verbositycombo")->setCurrentText(temp.c_str());
 
     // ...
 
@@ -712,7 +740,9 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
 
     char command[CMDLINEMAXLENGTH];
 
-    int len = snprintf(command, sizeof(command),"%s %s", FLAGCALCEXECUTABLEPATH, fc.parse().c_str() );
+    char cdworkingdirstring[256] = "cd ";
+    strcat(cdworkingdirstring,DEFAULTDIRECTORY);
+    int len = snprintf(command, sizeof(command),"%s; %s %s", cdworkingdirstring, FLAGCALCEXECUTABLEPATH, fc.parse().c_str() );
 
     if (len >= CMDLINEMAXLENGTH) {
         throw std::runtime_error("command too long");

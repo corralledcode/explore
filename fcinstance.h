@@ -52,7 +52,6 @@ public:
     std::vector<std::string> queries {};
     measuretype mt;
 
-
     std::string parse();
     void reverseparse(const std::string&);
 };

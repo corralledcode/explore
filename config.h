@@ -26,7 +26,7 @@ inline const std::map<std::string, measuretype>& measuretypestrings
 #define STRINGDELIMITER ';'
 #define STRINGDELIMITER_STR ";"
 #define CMDLINEMAXLENGTH 131072
-#define DEFAULTDIRECTORY "~/CLionProjects/explore/"
+#define DEFAULTDIRECTORY "~/CLionProjects/explore/scripts/"
 
 
 // ----

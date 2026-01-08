@@ -63,6 +63,7 @@ MainWindow::MainWindow(fcinstance fcin, QWidget *parent)
     ui->querytabs->setCurrentIndex(0);
     deleteQueryTab();
 
+    connect(ui->querytabs, &QTabWidget::currentChanged, this, &MainWindow::onQueryTabCurrentChanged);
 
 }
 
@@ -402,6 +403,11 @@ void MainWindow::addNewQueryTab()
 
     ui->querytabs->setCurrentIndex(newTabIndex);
 
+    auto q = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("queryedit");
+    auto cr1 = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr1edit");
+    auto cr2 = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr2edit");
+    auto cr3 = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr3edit");
+
     currentqueryedit = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("queryedit");
     currentcr1edit = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr1edit");
     currentcr2edit = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr2edit");
@@ -419,10 +425,11 @@ void MainWindow::addNewQueryTab()
     connect(newPage->findChild<QCheckBox*>("outfilecheckbox"), &QCheckBox::checkStateChanged, this, &MainWindow::onoutfilecheckboxchanged);
 
     onoutfilecheckboxchanged(false);
-    auto q = newPage->findChild<QPlainTextEdit*>("queryedit");
-    auto cr1 = newPage->findChild<QPlainTextEdit*>("cr1edit");
-    auto cr2 = newPage->findChild<QPlainTextEdit*>("cr2edit");
-    auto cr3 = newPage->findChild<QPlainTextEdit*>("cr3edit");
+    // auto q = newPage->findChild<QPlainTextEdit*>("queryedit");
+    // auto cr1 = newPage->findChild<QPlainTextEdit*>("cr1edit");
+    // auto cr2 = newPage->findChild<QPlainTextEdit*>("cr2edit");
+    // auto cr3 = newPage->findChild<QPlainTextEdit*>("cr3edit");
+
 
     logsyntaxhighlightchange( q );
     logsyntaxhighlightchange( cr1 );
@@ -477,8 +484,6 @@ void MainWindow::onoutfilecheckboxchanged(bool clicked) {
 void logsyntaxhighlightchange( QPlainTextEdit* textedit ) {
     QTextCursor cursor = textedit->textCursor();
     QTextBlock block = cursor.block();
-
-
     BlockData* pi;
     if (block.userData()) {
         pi = static_cast<BlockData*>(block.userData());
@@ -527,14 +532,15 @@ void logsyntaxhighlightchange( QPlainTextEdit* textedit ) {
     block.setUserData(static_cast<QTextBlockUserData*>(pi));
 }
 
-void doquerytextpositionchanged( const MainWindow* m, QObject* sender ) {
+void doquerytextpositionchanged( const MainWindow* m, QObject* sender) {
     // auto querycritedit = qobject_cast<QPlainTextEdit*>(sender);
     // auto cursor = querycritedit->textCursor();
     // QTextBlock block = cursor.block();
     // int pos = cursor.position();
     // QString text = m->currentqueryedit->toPlainText();
-    for (auto h : m->fcbridges[m->currentfcindex]->highlighters)
+    for (auto h : m->fcbridges[m->currentfcindex]->highlighters) {
         h->rehighlight();
+    }
 }
 
 void MainWindow::onquerycritedittextchanged() {
@@ -546,7 +552,7 @@ void MainWindow::onquerycriteditcursorpositionchanged() {
     doquerytextpositionchanged(this,sender());
 }
 
-void MainWindow::onQueryTabCurrentChanged(int pos ) {
+void MainWindow::onQueryTabCurrentChanged( int pos ) {
     currentfcindex = pos;
 }
 
@@ -580,6 +586,8 @@ void MainWindow::onmovequerybuttonClicked() {
             // std::cout << s << std::endl;
             fcbridges[fcbridges.size()-1]->fc.reverseparse(s);
             fcbridges[fcbridges.size()-1]->passparameterstowidgets();
+            currentqueryedit = ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("queryedit");
+            logsyntaxhighlightchange(currentqueryedit);
 
         }
     }

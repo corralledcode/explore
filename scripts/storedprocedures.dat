@@ -1,0 +1,197 @@
+mtbool Bipartiteviacycles
+
+FORALL (v1 IN V, FORALL (c IN Cyclesvs(v1), st(c) % 2 == 0))
+
+END
+
+mtbool Bipartiteviabipcrit
+
+EXISTS (p IN Setpartition(V), st(p) == 2, bipc(p[0],p[1]))
+
+END
+
+mtbool Cycleoflength ( mtdiscrete n )
+
+EXISTS (c IN Cycless, st(c) == n)
+
+END
+
+mtbool HasKnminor ( mtdiscrete n )
+
+EXISTS (s IN Ps(V), EXISTS (p IN Setpartition(s), st(p) == n, FORALL (q IN p, FORALL (r IN p, r != q, Nssc(q,r)) AND connvsc(q,E))))
+
+END
+
+mtcontinuous epsilon
+
+0.1
+
+END
+
+/* Diestel p 12 */ /* and more commenting... */
+
+mtcontinuous n_0 ( mtcontinuous d, mtdiscrete g )
+
+g % 2 == 0 ? 2 * SUM (i IN g/2, (d - 1)^i) : 1 + d * SUM (i IN (g - 1)/2, (d - 1)^i)
+
+END
+
+mtbool HasHminor ( mtset U, mtset F )
+
+EXISTS (s IN Ps(V), EXISTS (p IN Setpartition(s), st(p) == st(U),
+    FORALL (q IN p, connvsc(q,E)) AND
+        EXISTS (f IN Perms(NN(st(p))), FORALL (i IN st(p), FORALL (j IN st(p), i < j, Nssc(p[f[i]],p[f[j]]) IF {i,j} ELT F)))))
+
+END
+
+/* Diestel 3.4.1 p 73 (Mader 1978) */
+
+mtset delC ( mtset X, mtset C )
+
+NAMING (subg AS V SETMINUS (X CUPD C), SET (c IN C, EXISTS (v IN subg, ac(v,c)), c))
+
+END
+
+mtbool HpathsmeetXorF( mtset H, mtset X, mtset F )
+
+FORALL (v1 IN H, FORALL (v2 IN H, v1 != v2, FORALL (p IN Pathss(v1,v2), (p CAP H) == {v1,v2}, st(p CAP X) > 0 OR EXISTS (n IN st(p)-1, {p[n],p[n+1]} ELT F))))
+
+END
+
+mtcontinuous M_H( mtset H )
+
+NAMING (VminusH AS V SETMINUS H,
+NAMING (EminusH AS Edgess(VminusH),
+    MIN (X IN Ps(VminusH), st(X) + MIN (F IN Ps(EminusH), HpathsmeetXorF( H, X, F ),
+        NAMING (Y AS V SETMINUS (H CUPD X),
+        NAMING (C_F AS Componentss(GraphonVEg(Y,F)),
+            SUM (C IN C_F, floor(st(
+
+            delC(X,C)
+
+            )/2))))))))
+
+END
+
+mtset M_Hset( mtset H )
+
+NAMING (VminusH AS V SETMINUS H,
+NAMING (EminusH AS Edgess(VminusH),
+    SET (X IN Ps(VminusH), SET (F IN Ps(EminusH),
+        NAMING (Y AS V SETMINUS (H CUPD X),
+        NAMING (C_F AS Componentss(GraphonVEg(Y,F)), C_F))))))
+
+END
+
+mtset PairSet( mtset S )
+
+BIGCUP (a IN S, SET (b IN S, a != b, {a,b}))
+
+END
+
+mtcontinuous DisjointABpaths( mtset A, mtset B )
+
+NAMING (AcupB AS A CUP B,
+    NAMING (VminusAB AS V SETMINUS AcupB,
+        MAX (ps IN Setpartition(V) CUP {{}},
+            FORALL (p IN ps,
+                EXISTS (a IN A, EXISTS (b IN B, EXISTS (q IN Pathss(a,b), NAMING (qt AS TupletoSet(q), (a == b OR (a != b AND st(qt CAP AcupB) == 2)) AND qt <= p ) )))), st(ps)) ))
+
+END
+
+mtcontinuous MinXSeparates( mtset A, mtset B )
+
+MIN (X IN Ps(V), Separatesc(A,B,X), st(X))
+
+END
+
+mtbool EachComponentComplete
+
+THREADED EXISTS (s IN Setpartition(V), FORALL (t IN s, u IN V, v IN V, u != v, (ac(u,v) IF (u ELT t AND v ELT t)) AND ((u ELT t AND NOT v ELT t ) IMPLIES NOT ac(u,v))))
+
+END
+
+mtbool massivecomputation( mtset x, mtset y )
+
+(((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP
+((x SETXOR y) CUP x CUP y CUP x CUP y CUP x CUP y) CAP x CAP y CAP x CAP y CAP y CAP x CAP x CAP y) == (x CAP y)
+
+END
+
+mtdiscrete ntgcd( mtdiscrete m, mtdiscrete n )
+
+MAX (d IN NN(m > n ? n : m), d > 0, mod(m,d) == 0 AND mod(n,d) == 0)
+
+END
+
+mtbool ntrelprime( mtdiscrete m, mtdiscrete n )
+
+FORALL (d IN NN(m > n ? n+1 : m+1), d > 1, mod(m,d) != 0 OR mod(n,d) != 0)
+
+END
+
+mtdiscrete ntphi( mtdiscrete n )
+
+COUNT (d IN NN(n+1), d > 0, ntrelprime( n,d ))
+
+END
+
+
+
+
+mtset nWalkss( mtdiscrete u, mtdiscrete v, mtdiscrete length )
+
+SET (m IN Maps(length+1, dimm),
+     FORALL (n IN st(m) - 1, ac(m[n],m[n+1])) AND m[0] == u AND m[st(m)-1] == v, m )
+
+END
+
+mtset Hpaths( mtset HV, mtset HE )
+
+BIGCUP (u IN HV, v IN HV, u < v, SET (P IN Pathss(u,v), P CAP HV == {u,v} AND ({u,v} ELT HE IMPLIES st(P) > 2), P))
+
+END
+
+/* When in service of Tpartialorder and TnormalinG, the need to check whether
+   the edge is in the subgraph is obviated, since always they are then comparable in the Torder */
+
+mtset Hpathsquick( mtset HV )
+
+BIGCUP (u IN HV, v IN HV, u < v, SET (P IN Pathss(u,v), P CAP HV == {u,v}, P))
+
+END
+
+
+mtbool Tpartialorder( mtdiscrete root, mtset T, mtdiscrete u, mtdiscrete v )
+
+u ELT pyTdownclosure(root, T, v)
+
+END
+
+mtbool TnormalinG( mtdiscrete root, mtset T )
+
+NAMING (TV AS BIGCUP(e IN T, e),
+    FORALL (p IN Hpathsquick(TV), Tpartialorder( root, T, p[0], p[st(p)-1] ) OR Tpartialorder( root, T, p[st(p)-1], p[0] )))
+
+END
+
+mtset treefromorderedvertices( mttuple O )
+
+SET (n IN NN(dimm), n >= 1, {ANY (m IN NN(n), ac(O[n],O[m]), O[m]),O[n]} )
+
+END
+
+#include "../scripts/recursion.dat"
+#include "../scripts/planarity.dat"

@@ -1,0 +1,9 @@
+/* A list of bugs and non-bugs */
+
+/* Bug from testsuitethreaded.sh, line 39 */
+
+mtbool bug1
+
+THREADED FORALL (r IN Ps(V), st(r) == 2 IMPLIES r ELT E)
+
+END

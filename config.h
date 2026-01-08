@@ -58,6 +58,71 @@ enum measuretype { mtbool, mtdiscrete, mtcontinuous, mtset, mttuple, mtstring, m
 
 // ---
 
+enum class formulaoperator
+{foliteral,fofunction, foconstant, foderef,
+    foqforall, foqexists,
+    foplus, fominus, fotimes, fodivide, foexponent, fomodulus, // 11
+    folte, folt, foe, fone, fogte, fogt, founion, fodupeunion, fointersection, foelt, // 21
+    foand,foor,foxor,fonot,foimplies,foiff,foif,fotrue,fofalse,fovariable, fovariablederef, //32
+    foqsum, foqproduct, foqmin, foqmax, foqaverage, foqrange,
+    foqtally, foqcount, foqset, foqdupeset, foqtuple, foqunion, foqdupeunion, foqintersection,
+    foqmedian, foqmode,
+    foqany, foqexistsunique, foqanyn, foqexistsnunique, foqexistsn, foqforalln,
+    foswitch, focases, foin, fonaming, foas,
+    fosetminus, fosetxor, fomeet, fodisjoint,
+    fothreaded, fogpu,
+    forpartition, forsort};
+
+inline const std::map<std::string,formulaoperator> stringoperatorsmap
+        {{"AND",formulaoperator::foand},
+        {"OR",formulaoperator::foor},
+        {"NOT",formulaoperator::fonot},
+        {"XOR",formulaoperator::foxor},
+        {"IMPLIES",formulaoperator::foimplies},
+        {"IFF",formulaoperator::foiff},
+        {"IF",formulaoperator::foif},
+        {"SET",formulaoperator::foqset},
+        {"SETD",formulaoperator::foqdupeset},
+        {"TUPLE", formulaoperator::foqtuple},
+        {"FORALL",formulaoperator::foqforall},
+        {"EXISTS",formulaoperator::foqexists},
+        {"ANY", formulaoperator::foqany},
+        {"EXISTSUNIQUE", formulaoperator::foqexistsunique},
+        {"ANYN",formulaoperator::foqanyn},
+        {"EXISTSNUNIQUE", formulaoperator::foqexistsnunique},
+        {"EXISTSN", formulaoperator::foqexistsn},
+        {"FORALLN", formulaoperator::foqforalln},
+        {"CUP",formulaoperator::founion},
+        {"CUPD",formulaoperator::fodupeunion},
+        {"CAP",formulaoperator::fointersection},
+        {"ELT",formulaoperator::foelt},
+        {"SUM",formulaoperator::foqsum},
+        {"MIN",formulaoperator::foqmin},
+        {"MAX",formulaoperator::foqmax},
+        {"PRODUCT",formulaoperator::foqproduct},
+        {"AVERAGE",formulaoperator::foqaverage},
+        {"RANGE",formulaoperator::foqrange},
+        {"TALLY",formulaoperator::foqtally},
+        {"COUNT",formulaoperator::foqcount},
+        {"BIGCUP",formulaoperator::foqunion},
+        {"BIGCUPD",formulaoperator::foqdupeunion},
+        {"BIGCAP", formulaoperator::foqintersection},
+        {"MEDIAN", formulaoperator::foqmedian},
+        {"MODE", formulaoperator::foqmode},
+        {"IN", formulaoperator::foin},
+        {"NAMING", formulaoperator::fonaming},
+        {"AS", formulaoperator::foas},
+        {"SETMINUS", formulaoperator::fosetminus},
+        {"SETXOR", formulaoperator::fosetxor},
+        {"MEET", formulaoperator::fomeet},
+        {"DISJOINT", formulaoperator::fodisjoint},
+        {"THREADED", formulaoperator::fothreaded},
+        {"GPU", formulaoperator::fogpu},
+        {"PARTITION", formulaoperator::forpartition},
+        {"SORT", formulaoperator::forsort}};
+
+// ---
+
 
 inline void openexternaleditor( QObject* sender, const QString& fn ) {
     QProcess *process = new QProcess(sender);

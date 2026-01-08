@@ -157,16 +157,12 @@ std::string fcinstance::parse()
 
 void fcinstance::reverseparse(const std::string& command) {
 
-
     std::vector<std::string> rgs {};
     rgs.push_back("r1");
     rgs.push_back("r2");
     rgs.push_back("r3");
     rgs.push_back("r4");
     rgs.push_back("r5");
-
-
-
 
     auto args = parse_quoted_string(command);
     auto args2 = cmdlineparseiterationtwo(args);
@@ -229,6 +225,7 @@ void fcinstance::reverseparse(const std::string& command) {
                     dim = std::stoi(args2[n].second);
                 }
                 double edgecnt = dim*(dim-1)/4.0;
+
                 if (args2.size() - n >= 2 && args2[n+1].first == "default" && is_real(args2[n+1].second)) {
                     edgecnt = std::stof(args2[n+1].second);
                 }
@@ -266,8 +263,10 @@ void fcinstance::reverseparse(const std::string& command) {
                 for (auto p : args2) {
                     if (p.first == "p") {
                         double f = std::stof(p.second);
+                        edgecnt = 0.5;
                         if (f >= 0 && f <= 1)
-                            edgecnt = (long int)(std::stof(p.second) * (dim*(dim-1)/2));
+                            // edgecnt = (long int)(std::stof(p.second) * (dim*(dim-1)/2));
+                            edgecnt = f;
                         inlinep = true;
                     }
 
@@ -503,7 +502,6 @@ void fcinstanceQtbridge::setquerytype( const std::string& mt ) {
 
 void fcinstanceQtbridge::passparameterstowidgets() {
 
-
     // -r
 
     ui->querytabs->currentWidget()->findChild<QCheckBox*>("randomizercheckbox")->setChecked(!fc.randomizers.empty());
@@ -527,7 +525,7 @@ void fcinstanceQtbridge::passparameterstowidgets() {
         }
         ui->querytabs->currentWidget()->findChild<QComboBox*>("randomizercountcombobox")->setCurrentText(std::to_string(r.cnt).c_str());
         ui->querytabs->currentWidget()->findChild<QComboBox*>("randomizeredgecountcombobox")->setCurrentText(std::to_string(r.edgecnt).c_str());
-        ui->querytabs->currentWidget()->findChild<QSlider*>("randomizeredgecountslider")->setValue(int(edgecount*100));
+        ui->querytabs->currentWidget()->findChild<QSlider*>("randomizeredgecountslider")->setValue(static_cast<int>(std::round((edgecount*100))));
         ui->querytabs->currentWidget()->findChild<QComboBox*>("randomizercountcombobox")->setCurrentText(std::to_string(r.cnt).c_str());
 
     }

@@ -1,0 +1,11 @@
+PTH=${PTH:-'../bin'}
+
+# checking Knc	
+$PTH/flagcalc -r 5 p=0.500000 10 r1 -a s="FORALL (u IN V, v IN V, ac(u,v) OR u == v) IFF Knc(dimm,1)" all 
+
+# checking Knc	again
+$PTH/flagcalc -r 5 p=0.500000 10 r1 -a s="FORALL (u IN V, v IN V, ac(u,v) OR u == v) IFF Knc(dimm,1)" all 
+
+# 
+$PTH/flagcalc -r 5 p=0.500000 10 r1 -a s="FORALL (u IN V, v IN V, ac(u,v) OR u == v) IFF Knc(dimm,1)" all 
+

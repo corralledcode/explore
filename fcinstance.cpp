@@ -180,9 +180,9 @@ void fcinstance::reverseparse(const std::string& command) {
                 p = args2[++n];
                 while (n < args2.size() && p.second.size() > 0 && !(p.first == "default" && p.second[0] == '-')) {
                     if (p.first == "f")
-                    {
                         inlinegraphs.push_back(p.second);
-                    }
+                    if (p.first == "default")
+                        graphfilenames.push_back(p.second);
                     p = args2[++n];
                 }
                 if (!(p.first == "default" && !p.second.empty() && p.second[0] == '-')) {
@@ -345,7 +345,7 @@ void fcinstance::reverseparse(const std::string& command) {
                     --n;
                 }
             } else if (p.second == "-v" && n+1 < args2.size()) {
-                p = args2[++n];
+                ++n;
                 while (n < args2.size() && !(args2[n].first == "default" && args2[n].second.size() > 0 && args2[n].second[0] == '-' )) {
                     if (args2[n].first == "i")
                         verbosityfilenames.push_back(args2[n].second);
@@ -353,9 +353,33 @@ void fcinstance::reverseparse(const std::string& command) {
                         verbositylevels.push_back(args2[n].second);
                     n++;
                 }
-                if (!p.second.empty() && p.second[0] == '-') {
+                if (n < args2.size()) {
+                    p = args2[n];
+                    if (!p.second.empty() && p.second[0] == '-') {
+                        --n;
+                    }
+                } else
                     --n;
+            } else if (p.second == "-g" && n+1 < args2.size()) {
+                ++n;
+                outoverwrite = false;
+                outpassed = false;
+                while (n < args2.size() && !(args2[n].first == "default" && args2[n].second.size() > 0 && args2[n].second[0] == '-' )) {
+                    if (args2[n].first == "o")
+                        outfilename = args2[n].second;
+                    else if (args2[n].first == "default" && args2[n].second == "overwrite")
+                            outoverwrite = true;
+                    else if (args2[n].first == "default" && args2[n].second == "passed")
+                            outpassed = true;
+                    n++;
                 }
+                if (n < args2.size()) {
+                    p = args2[n];
+                    if (!p.second.empty() && p.second[0] == '-') {
+                        --n;
+                    }
+                } else
+                    --n;
             }
 
         }
@@ -582,7 +606,8 @@ void fcinstanceQtbridge::passparameterstowidgets() {
     for (; m < GLOBALCRITCOUNT+1; ++m) {
         fc.queries[m] = "";
     }
-    fc.queries[GLOBALCRITCOUNT] = newqueries[n-1];
+    if (n > 0)
+        fc.queries[GLOBALCRITCOUNT] = newqueries[n-1];
 
     ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("queryedit")->document()->setPlainText(fc.queries[GLOBALCRITCOUNT].c_str());
     ui->querytabs->currentWidget()->findChild<QPlainTextEdit*>("cr1edit")->document()->setPlainText(fc.queries[0].c_str());
@@ -603,6 +628,16 @@ void fcinstanceQtbridge::passparameterstowidgets() {
         temp.append("i=\"" + vf+"\"");
     }
     ui->querytabs->currentWidget()->findChild<QComboBox*>("verbositycombo")->setCurrentText(temp.c_str());
+
+    // -g
+
+    if (fc.outfilename != "") {
+        ui->querytabs->currentWidget()->findChild<QCheckBox*>("outfilecheckbox")->setChecked(true);
+        ui->querytabs->currentWidget()->findChild<QComboBox*>("outfilecombo")->setCurrentText(fc.outfilename.c_str());
+        ui->querytabs->currentWidget()->findChild<QCheckBox*>("outpassedcheckbox")->setChecked(fc.outpassed);
+        ui->querytabs->currentWidget()->findChild<QCheckBox*>("outoverwritecheckbox")->setChecked(fc.outoverwrite);
+    } else
+        ui->querytabs->currentWidget()->findChild<QCheckBox*>("outfilecheckbox")->setChecked(false);
 
     // ...
 
@@ -768,7 +803,7 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
 
     char command[CMDLINEMAXLENGTH];
 
-    char cdworkingdirstring[256] = "cd ";
+    char cdworkingdirstring[1024] = "cd ";
     strcat(cdworkingdirstring,DEFAULTDIRECTORY);
     int len = snprintf(command, sizeof(command),"%s; %s %s", cdworkingdirstring, FLAGCALCEXECUTABLEPATH, fc.parse().c_str() );
 
@@ -776,6 +811,8 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
         throw std::runtime_error("command too long");
     }
 
+    // QApplication::setOverrideCursor(Qt::WaitCursor);
+    // QApplication::processEvents();
 #if defined(_WIN32) || defined(_WIN64)
     FILE* pipe = _popen(FLAGCALCEXECUTABLEPATH, parameters);
 #else
@@ -787,6 +824,7 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
     if (!pipe) {
         throw std::runtime_error("popen() failed!");
     }
+    // QApplication::restoreOverrideCursor();
 
     std::array<char, 128> buffer;
     std::string result {};

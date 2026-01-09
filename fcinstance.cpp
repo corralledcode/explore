@@ -322,7 +322,7 @@ void fcinstance::reverseparse(const std::string& command) {
                         } else if (args2[n].first[0] == 'c') {
                             mt = mtbool;
                             queries[p] = (args2[n].second);
-                        } else if (args2[n].first[0] == 'i') {
+                        } else if (args2[n].first[0] == 'i' && args2[n].first != "isp" && args2[n].first != "ipy") {
                             mt = mtdiscrete;
                             queries[p] = (args2[n].second);
                         } else if (args2[n].first[0] == 'z') {
@@ -628,6 +628,25 @@ void fcinstanceQtbridge::passparameterstowidgets() {
         temp.append("i=\"" + vf+"\"");
     }
     ui->querytabs->currentWidget()->findChild<QComboBox*>("verbositycombo")->setCurrentText(temp.c_str());
+
+    temp.clear();
+    for (auto s : fc.storedprocedurefilenames) {
+        if (temp != "")
+            temp.append("; ");
+        temp.append(s);
+    }
+
+    ui->querytabs->currentWidget()->findChild<QComboBox*>("storedprocedurescombo")->setCurrentText(temp.c_str());
+
+    temp.clear();
+    for (auto s : fc.pythonfilenames) {
+        if (temp != "")
+            temp.append("; ");
+        temp.append(s);
+    }
+
+    ui->querytabs->currentWidget()->findChild<QComboBox*>("pythoncombo")->setCurrentText(temp.c_str());
+
 
     // -g
 

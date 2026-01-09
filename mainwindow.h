@@ -5,6 +5,7 @@
 #include <QPushButton>
 
 #include "fcinstance.h"
+#include "inlinegraphsdialog.h"
 #include "SyntaxHighlighter.h"
 #include "verbositydialog.h"
 
@@ -37,6 +38,8 @@ public:
 
     int openQueryFileDialog();
     VerbosityDialog *verbosityDialog {};
+    InlineGraphsDialog *inlinegraphsDialog {};
+
 private slots:
 
     void onRunQueryButtonClicked();
@@ -70,6 +73,7 @@ private slots:
     void onpythonbuttonClicked();
     void onlogfilebuttonClicked();
     void onoutfilebuttonClicked();
+    void oninlinegraphsbuttonclicked();
     void onrunandlogbuttonClicked();
     void onLogQueryButtonClicked();
     void onlogfileopenbuttonClicked();
@@ -85,6 +89,7 @@ private slots:
     void onmovequerybuttonClicked();
 
     void handleverbosityDialogClose(int);
+    void handleinlinegraphsDialogClose(int);
 
 
 

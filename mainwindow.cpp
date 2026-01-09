@@ -3,6 +3,7 @@
 #include "verbositydialog.h"
 #include "./ui_verbositydialog.h"
 #include <QFileDialog>
+#include <QLayout>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -11,6 +12,7 @@
 #include "querytab.h"
 #include "SyntaxHighlighter.h"
 #include "config.h"
+#include "inlinegraphsdialog.h"
 
 void logsyntaxhighlightchange( QPlainTextEdit* textedit );
 
@@ -467,6 +469,7 @@ void MainWindow::addNewQueryTab()
 
     connect(newPage->findChild<QToolButton*>("outfileopenbutton"), &QToolButton::clicked, this, &MainWindow::onoutfileopenbuttonClicked);
     connect( newPage->findChild<QToolButton*>("graphfilesbutton"), &QToolButton::clicked, this, &MainWindow::ongraphfilesbuttonclicked);
+    connect( newPage->findChild<QToolButton*>("inlinegraphsbutton"), &QToolButton::clicked, this, &MainWindow::oninlinegraphsbuttonclicked);
 
 }
 
@@ -590,6 +593,46 @@ void MainWindow::ongraphfilesbuttonclicked() {
     }
 
 }
+
+void MainWindow::handleinlinegraphsDialogClose(int result) {
+    auto qt = ui->querytabs->currentWidget()->findChild<QComboBox*>("inlinegraphscombo");
+    std::vector<std::string> ss {};
+    auto igW = inlinegraphsDialog->findChild<QWidget*>("inlinegraphswidget");
+
+    if (result == QDialog::Accepted) {
+        for (int i = 0; i < igW->children().size(); i++) {
+            if (auto te = dynamic_cast<QPlainTextEdit*>(igW->children().at(i)))
+                ss.push_back(te->toPlainText().toStdString());
+        }
+        auto t = tosemicolondelimeted(ss);
+        qt->addItem(t.c_str());
+        qt->setCurrentText(t.c_str());
+    }
+    delete igW->layout();
+    while (igW->children().size() > 0) {
+        delete igW->children().at(0);
+    }
+}
+
+
+
+void MainWindow::oninlinegraphsbuttonclicked() {
+    if (!inlinegraphsDialog) {
+        inlinegraphsDialog = new InlineGraphsDialog(this);
+        connect(inlinegraphsDialog, &QDialog::finished, this, &MainWindow::handleinlinegraphsDialogClose);
+    }
+
+    auto qt = ui->querytabs->currentWidget()->findChild<QComboBox*>("inlinegraphscombo");
+    auto ss = parsesemicolondelimeted(qt->currentText().toStdString(), STRINGDELIMITER);
+    auto igW = inlinegraphsDialog->findChild<QWidget*>("inlinegraphswidget");
+
+    // igW->layout()->setAlignment(Qt::AlignVCenter);
+    for (auto s : ss)
+        inlinegraphsDialog->add(s);
+
+    inlinegraphsDialog->show();
+}
+
 
 void MainWindow::onmovequerybuttonClicked() {
     auto selected = ui->scripttree->currentItem();

@@ -805,7 +805,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="QIcon::ThemeIcon::DocumentOpen"/>
+                   <iconset theme="QIcon::ThemeIcon::DocumentProperties"/>
                   </property>
                  </widget>
                 </item>
@@ -909,7 +909,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::DocumentOpen"/>
+             <iconset theme="QIcon::ThemeIcon::DocumentProperties"/>
             </property>
            </widget>
           </item>

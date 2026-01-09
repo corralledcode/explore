@@ -30,6 +30,7 @@ set(PROJECT_SOURCES
         querytab.h
         SyntaxHighlighter.cpp
         SyntaxHighlighter.h
+        inlinegraphsdialog.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

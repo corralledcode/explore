@@ -624,7 +624,7 @@ void MainWindow::oninlinegraphsbuttonclicked() {
 
     auto qt = ui->querytabs->currentWidget()->findChild<QComboBox*>("inlinegraphscombo");
     auto ss = parsesemicolondelimeted(qt->currentText().toStdString(), STRINGDELIMITER);
-    auto igW = inlinegraphsDialog->findChild<QWidget*>("inlinegraphswidget");
+    // auto igW = inlinegraphsDialog->findChild<QWidget*>("inlinegraphswidget");
 
     // igW->layout()->setAlignment(Qt::AlignVCenter);
     for (auto s : ss)

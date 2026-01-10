@@ -109,7 +109,7 @@ std::string fcinstance::parse()
         for (auto sp : storedprocedurefilenames)
             out.append("isp=\"" + sp + "\" ");
         if (!pythonfilenames.empty()) {
-            out.append(" j=1"); // one thread for Python's GIL to work
+            out.append(" j=1 "); // one thread for Python's GIL to work
             for (auto py : pythonfilenames)
                 out.append("ipy=\"" + py + "\" ");
         }

@@ -863,6 +863,7 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
     // Read the output a line or buffer at a time and append to the result string
     while (std::fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
         result += buffer.data();
+        // textedit->append(buffer.data());
         textedit->appendPlainText(buffer.data());
         if (ofs.is_open()) {
             ofs << buffer.data();

@@ -315,6 +315,9 @@
                </item>
                <item>
                 <widget class="QToolButton" name="LogandRunQueryButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="toolTip">
                   <string>Run and Log Query to Shell Script</string>
                  </property>
@@ -328,6 +331,9 @@
                </item>
                <item>
                 <widget class="QToolButton" name="LogQueryButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="toolTip">
                   <string>Log Query to Shell Script</string>
                  </property>
@@ -629,6 +635,9 @@
                                 <height>30</height>
                                </size>
                               </property>
+                              <property name="tabChangesFocus">
+                               <bool>true</bool>
+                              </property>
                              </widget>
                             </item>
                            </layout>
@@ -663,6 +672,9 @@
                                 <width>16777215</width>
                                 <height>30</height>
                                </size>
+                              </property>
+                              <property name="tabChangesFocus">
+                               <bool>true</bool>
                               </property>
                              </widget>
                             </item>
@@ -923,6 +935,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="outputopenbutton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Open file</string>
                  </property>
@@ -933,6 +948,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="clearoutputfilebutton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Clear file</string>
                  </property>

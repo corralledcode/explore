@@ -30,7 +30,7 @@ public:
     std::vector<std::string> pythonfilenames {};
     std::string outfilename;
     bool outoverwrite;
-    bool outpassed;
+    bool outpassed; // if wished, set default check state in Qt
     std::string outputfilename;
     std::vector<std::string> graphfilenames {};
     std::vector<std::string> inlinegraphs {};

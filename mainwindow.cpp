@@ -43,7 +43,7 @@ MainWindow::MainWindow(fcinstance fcin, QWidget *parent)
     connect(ui->outputopenbutton, &QPushButton::clicked, this, &MainWindow::onoutputopenbuttonClicked);
     connect(ui->clearoutputfilebutton, &QPushButton::clicked, this, &MainWindow::onclearoutputfilebuttonClicked);
     connect(ui->clearoutputbutton, &QPushButton::clicked, this, &MainWindow::onclearoutputbuttonClicked);
-
+    connect(ui->outputfilecombobox, &QComboBox::currentTextChanged, this, &MainWindow::onoutputfilecomboboxchanged);
 
     connect(ui->NewQueryButton, &QPushButton::clicked, this, &MainWindow::onNewQueryButtonClicked);
     connect(ui->DuplicateQueryButton, &QPushButton::clicked, this, &MainWindow::onDuplicateQueryButtonClicked);
@@ -158,27 +158,33 @@ int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName )
             // Print each line to the console
             // std::cout << line << std::endl;
             QTreeWidgetItem *childItem = nullptr;
-            while (line.rfind("#", 0) == 0) {
+            bool eof = false;
+            while (!eof && line.rfind("#", 0) == 0) {
                 std::string accumulatestring {};
                 accumulatestring += line;
                 bool part = true;
                 while (part && !line.empty()) {
                     part = false;
-                    if (std::getline(inputFile, line))
+                    if (std::getline(inputFile, line)) {
                         part = (line.rfind("#", 0) == 0);
+                    } else
+                        eof = true;
                     if (part)
                         accumulatestring += "; " + line;
                 }
 
                 childItem = new QTreeWidgetItem();
                 childItem->setText(0,accumulatestring.c_str());
+                // std::getline(inputFile, line);
                 while (line.empty())
-                    if (!std::getline(inputFile,line))
+                    if (!std::getline(inputFile,line)) {
+                        eof = true;
                         break;
+                    }
                 if (line.rfind("#", 0) == 0)
                     tree->addChild(childItem);
             }
-            if (!line.empty()) {
+            if (!eof && !line.empty()) {
                 std::string temp;
                 while (line[line.size()-1] == '\\') {
                     if (!std::getline(inputFile, temp))
@@ -379,12 +385,17 @@ void MainWindow::onoutputfilebuttonClicked() {
                                             tr("Output files (*.dat);;All files (*.*)"));
     if (!fileName.isEmpty()) {
         outputfilename = fileName.toStdString();
-    } else
-        outputfilename = "";
-    ui->outputfilecombobox->setCurrentText(outputfilename.c_str());
-    ui->outputfilecombobox->addItem(outputfilename.c_str());
-    std::ofstream outfile(outputfilename.c_str(), std::ofstream::out);
-    outfile.close(); // has the effect of erasing it
+        ui->outputfilecombobox->setCurrentText(outputfilename.c_str());
+        ui->outputfilecombobox->addItem(outputfilename.c_str());
+        std::ofstream outfile(outputfilename.c_str(), std::ofstream::out);
+        outfile.close(); // has the effect of erasing it
+    }
+}
+
+void MainWindow::onoutputfilecomboboxchanged() {
+    ui->outputopenbutton->setEnabled(!ui->outputfilecombobox->currentText().isEmpty());
+    ui->clearoutputfilebutton->setEnabled(!ui->outputfilecombobox->currentText().isEmpty());
+    outputfilename = ui->outputfilecombobox->currentText().toStdString();
 }
 
 void MainWindow::onclearoutputfilebuttonClicked() {
@@ -403,6 +414,7 @@ void MainWindow::onclearoutputbuttonClicked() {
 };
 void MainWindow::onoutputopenbuttonClicked() {
     openexternaleditor(this, outputfilename.c_str());
+    // openexternaleditor(this, ui->outputfilecombobox->currentText());
 };
 
 void MainWindow::onoutfileopenbuttonClicked() {openexternaleditor(this, ui->querytabs->currentWidget()->findChild<QComboBox*>("outfilecombo")->currentText());}
@@ -619,6 +631,8 @@ void MainWindow::onQueryTabCurrentChanged( int pos ) {
 
 void MainWindow::onlogfilecombocurrenttextchanged() {
     ui->logfileopenbutton->setEnabled(!ui->logfilecombo->currentText().isEmpty());
+    ui->LogandRunQueryButton->setEnabled(!ui->logfilecombo->currentText().isEmpty());
+    ui->LogQueryButton->setEnabled(!ui->logfilecombo->currentText().isEmpty());
 }
 void MainWindow::ongraphfilesbuttonclicked() {
     auto fileNames = QFileDialog::getOpenFileNames(this,

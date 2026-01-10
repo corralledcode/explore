@@ -85,13 +85,13 @@ private slots:
     void onoutputopenbuttonClicked();
     void onclearoutputfilebuttonClicked();
     void onrunbuttonClicked();
+    void onoutputfilecomboboxchanged();
     void onoutfileopenbuttonClicked();
 
     void onmovequerybuttonClicked();
 
     void handleverbosityDialogClose(int);
     void handleinlinegraphsDialogClose(int);
-
 
 
 private:

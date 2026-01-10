@@ -10,3 +10,4 @@ $PTH/flagcalc -r 10 p=0.500000 100 r1 -a s="FORALL (x IN V, y IN V, ac(x,y) IFF 
 # Testing s1, etc.
 $PTH/flagcalc -r 5 p=0.500000 10 r1 -a s1="conn1c" s2="forestc" s4="treec" all 
 
+$PTH/flagcalc -r 5 p=0.500000 10 r1 -a e="SET (u IN V, v IN V, ac(u,v), {u,v})" all -v set crit allsets 

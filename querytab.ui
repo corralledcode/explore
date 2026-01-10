@@ -118,7 +118,11 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPlainTextEdit" name="commenttextedit"/>
+                 <widget class="QPlainTextEdit" name="commenttextedit">
+                  <property name="tabChangesFocus">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -140,6 +144,9 @@
                     <width>16777215</width>
                     <height>80</height>
                    </size>
+                  </property>
+                  <property name="tabChangesFocus">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -176,6 +183,9 @@
                     <height>80</height>
                    </size>
                   </property>
+                  <property name="tabChangesFocus">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -204,6 +214,9 @@
                     <width>16777215</width>
                     <height>80</height>
                    </size>
+                  </property>
+                  <property name="tabChangesFocus">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -847,7 +860,7 @@
                    <string>Passed</string>
                   </property>
                   <property name="checked">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>

@@ -24,7 +24,7 @@ public:
     QPlainTextEdit* currentcr2edit;
     QPlainTextEdit* currentcr3edit;
 
-    void addNewQueryTab();
+    void addNewQueryTab(const bool duplicate = false);
     void deleteQueryTab();
     std::vector<fcinstanceQtbridge*> fcbridges {};
     std::string outputfilename {};
@@ -45,6 +45,7 @@ private slots:
     void onRunQueryButtonClicked();
     void onDeleteQueryButtonClicked();
     void onNewQueryButtonClicked();
+    void onDuplicateQueryButtonClicked();
 
     void onrandomizeredgecountvaluechanged(const int& value);
     void onrandomizeredgecountcombochanged(const QString& text);

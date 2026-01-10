@@ -46,6 +46,7 @@ MainWindow::MainWindow(fcinstance fcin, QWidget *parent)
 
 
     connect(ui->NewQueryButton, &QPushButton::clicked, this, &MainWindow::onNewQueryButtonClicked);
+    connect(ui->DuplicateQueryButton, &QPushButton::clicked, this, &MainWindow::onDuplicateQueryButtonClicked);
     connect(ui->DeleteQueryButton, &QPushButton::clicked, this, &MainWindow::onDeleteQueryButtonClicked);
     connect(ui->AddToolButton, &QPushButton::clicked, this, &MainWindow::onAddToolButtonClicked);
     connect(ui->RemoveToolButton, &QPushButton::clicked, this, &MainWindow::onRemoveToolButtonClicked);
@@ -85,6 +86,11 @@ void MainWindow::onLogQueryButtonClicked() {
 void MainWindow::onNewQueryButtonClicked() {
     addNewQueryTab();
 }
+
+void MainWindow::onDuplicateQueryButtonClicked() {
+    addNewQueryTab(true);
+}
+
 
 void MainWindow::onDeleteQueryButtonClicked() {
     deleteQueryTab();
@@ -152,23 +158,26 @@ int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName )
             // Print each line to the console
             // std::cout << line << std::endl;
             QTreeWidgetItem *childItem = nullptr;
-            if (line.rfind("#", 0) == 0) {
+            while (line.rfind("#", 0) == 0) {
                 std::string accumulatestring {};
                 accumulatestring += line;
                 bool part = true;
-                while (part) {
+                while (part && !line.empty()) {
                     part = false;
                     if (std::getline(inputFile, line))
                         part = (line.rfind("#", 0) == 0);
                     if (part)
                         accumulatestring += "; " + line;
                 }
+
                 childItem = new QTreeWidgetItem();
                 childItem->setText(0,accumulatestring.c_str());
+                while (line.empty())
+                    if (!std::getline(inputFile,line))
+                        break;
+                if (line.rfind("#", 0) == 0)
+                    tree->addChild(childItem);
             }
-            if (line.empty())
-                while (line.empty() && std::getline(inputFile,line))
-                    ;
             if (!line.empty()) {
                 std::string temp;
                 while (line[line.size()-1] == '\\') {
@@ -399,8 +408,16 @@ void MainWindow::onoutputopenbuttonClicked() {
 void MainWindow::onoutfileopenbuttonClicked() {openexternaleditor(this, ui->querytabs->currentWidget()->findChild<QComboBox*>("outfilecombo")->currentText());}
 void MainWindow::onrunbuttonClicked() {}
 
-void MainWindow::addNewQueryTab()
+void MainWindow::addNewQueryTab(const bool duplicate)
 {
+    QueryTabWidget *oldpage;
+    if (duplicate) {
+        if (ui->querytabs->currentWidget())
+            oldpage = dynamic_cast<QueryTabWidget *>(ui->querytabs->currentWidget());
+        else
+            oldpage = nullptr;
+    }
+
     // 1. Create an instance of your custom widget/form
     QueryTabWidget *newPage = new QueryTabWidget(this); // Pass 'this' as the parent
 
@@ -470,6 +487,33 @@ void MainWindow::addNewQueryTab()
     connect(newPage->findChild<QToolButton*>("outfileopenbutton"), &QToolButton::clicked, this, &MainWindow::onoutfileopenbuttonClicked);
     connect( newPage->findChild<QToolButton*>("graphfilesbutton"), &QToolButton::clicked, this, &MainWindow::ongraphfilesbuttonclicked);
     connect( newPage->findChild<QToolButton*>("inlinegraphsbutton"), &QToolButton::clicked, this, &MainWindow::oninlinegraphsbuttonclicked);
+
+    // now copy oldpage values to newpage
+
+    if (duplicate && oldpage) {
+        newPage->findChild<QSlider*>("randomizeredgecountslider")->setValue(oldpage->findChild<QSlider*>("randomizeredgecountslider")->value());
+        newPage->findChild<QComboBox*>("randomizeredgecountcombobox")->setCurrentText(oldpage->findChild<QComboBox*>("randomizeredgecountcombobox")->currentText());
+        newPage->findChild<QComboBox*>("randomizerdimcombobox")->setCurrentText(oldpage->findChild<QComboBox*>("randomizerdimcombobox")->currentText());
+        newPage->findChild<QComboBox*>("randomizercountcombobox")->setCurrentText(oldpage->findChild<QComboBox*>("randomizercountcombobox")->currentText());
+        newPage->findChild<QComboBox*>("randomizercombobox")->setCurrentText(oldpage->findChild<QComboBox*>("randomizercombobox")->currentText());
+        newPage->findChild<QCheckBox*>("randomizercheckbox")->setCheckState(oldpage->findChild<QCheckBox*>("randomizercheckbox")->checkState());
+        newPage->findChild<QComboBox*>("graphfilescombo")->setCurrentText(oldpage->findChild<QComboBox*>("graphfilescombo")->currentText());
+        newPage->findChild<QCheckBox*>("graphfilescheckbox")->setCheckState(oldpage->findChild<QCheckBox*>("graphfilescheckbox")->checkState());
+        newPage->findChild<QComboBox*>("inlinegraphscombo")->setCurrentText(oldpage->findChild<QComboBox*>("inlinegraphscombo")->currentText());
+        newPage->findChild<QCheckBox*>("inlinegraphscheckbox")->setCheckState(oldpage->findChild<QCheckBox*>("inlinegraphscheckbox")->checkState());
+        newPage->findChild<QComboBox*>("outfilecombo")->setCurrentText(oldpage->findChild<QComboBox*>("outfilecombo")->currentText());
+        newPage->findChild<QCheckBox*>("outfilecheckbox")->setCheckState(oldpage->findChild<QCheckBox*>("outfilecheckbox")->checkState());
+        newPage->findChild<QCheckBox*>("outpassedcheckbox")->setCheckState(oldpage->findChild<QCheckBox*>("outpassedcheckbox")->checkState());
+        newPage->findChild<QCheckBox*>("outoverwritecheckbox")->setCheckState(oldpage->findChild<QCheckBox*>("outoverwritecheckbox")->checkState());
+        newPage->findChild<QComboBox*>("storedprocedurescombo")->setCurrentText(oldpage->findChild<QComboBox*>("storedprocedurescombo")->currentText());
+        newPage->findChild<QComboBox*>("pythoncombo")->setCurrentText(oldpage->findChild<QComboBox*>("pythoncombo")->currentText());
+        newPage->findChild<QComboBox*>("verbositycombo")->setCurrentText(oldpage->findChild<QComboBox*>("verbositycombo")->currentText());
+        newPage->findChild<QPlainTextEdit*>("commenttextedit")->setPlainText(oldpage->findChild<QPlainTextEdit*>("commenttextedit")->toPlainText());
+        q->setPlainText(oldpage->findChild<QPlainTextEdit*>("queryedit")->toPlainText());
+        cr1->setPlainText(oldpage->findChild<QPlainTextEdit*>("cr1edit")->toPlainText());
+        cr2->setPlainText(oldpage->findChild<QPlainTextEdit*>("cr2edit")->toPlainText());
+        cr3->setPlainText(oldpage->findChild<QPlainTextEdit*>("cr3edit")->toPlainText());
+    }
 
 }
 

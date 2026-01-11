@@ -65,7 +65,9 @@ void MyHighlighter::highlightBlock(const QString &text)
         // setFormat(0,textEdit->document()->toPlainText().length(),baseformat);
         auto pi = static_cast<BlockData*>(textEdit->textCursor().block().userData());
         auto cursor = textEdit->textCursor();
-        auto pos = cursor.position();
+        auto pos = cursor.position() - 1;
+        if (pos < 0)
+            pos = 0;
         QTextCharFormat endformat;
         endformat.setForeground(Qt::darkBlue);
         endformat.setBackground(Qt::yellow);
@@ -76,28 +78,46 @@ void MyHighlighter::highlightBlock(const QString &text)
         if (pi->parentheses.size() > 0) {
             if (pos >= pi->parentheses.size())
                 pos = pi->parentheses.size()-1;
+
             auto a = pi->parentheses[pos].position;
             if (a >= 0) {
                 if (a < pos) {
-                    setFormat(a+1, pos-a, format );
+                    // setFormat(a+1, pos-a, format );
                     setFormat( a, 1, endformat);
                     setFormat( pos, 1, endformat);
                 } else {
-                    setFormat(pos+1, a-pos, format );
+                    // setFormat(pos+1, a-pos, format );
                     setFormat( pos, 1, endformat);
                     setFormat( a, 1, endformat);
                 }
+            } else {
+                pos++;
+                if (pos < pi->parentheses.size()) {
+                    auto a = pi->parentheses[pos].position;
+                    if (a >= 0) {
+                        if (a < pos) {
+                            // setFormat(a+1, pos-a, format );
+                            setFormat( a, 1, endformat);
+                            setFormat( pos, 1, endformat);
+                        } else {
+                            // setFormat(pos+1, a-pos, format );
+                            setFormat( pos, 1, endformat);
+                            setFormat( a, 1, endformat);
+                        }
+                    }
+                }
             }
+
             /*
             if (pos > 0) {
                 auto b = pi->parentheses[pos-1].position;
                 if (b >= 0) {
                     if (b < pos) {
-                        setFormat(b+1, pos-b - 1, format );
+                        // setFormat(b+1, pos-b - 1, format );
                         setFormat( pos - 1, 1, endformat);
                         setFormat( b, 1, endformat);
                     } else {
-                        setFormat(pos-1, b-pos, format );
+                        // setFormat(pos-1, b-pos, format );
                         setFormat( b, 1, endformat);
                         setFormat( pos, 1, endformat);
                     }

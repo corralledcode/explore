@@ -815,6 +815,17 @@ int fcinstanceQtbridge::runQuery() {
     return runQuerypostpopulate();
 }
 
+std::string removebackspacesfromtext( const std::string& s) {
+    std::string result {};
+    for (auto c : s)
+        if (c == '\b') {
+            if (!result.empty())
+                result = result.substr(0, result.size() - 1);
+        } else
+            result += c;
+    return result;
+}
+
 int fcinstanceQtbridge::runQuerypostpopulate() {
 
 
@@ -862,11 +873,16 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
 
     // Read the output a line or buffer at a time and append to the result string
     while (std::fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
-        result += buffer.data();
-        // textedit->append(buffer.data());
-        textedit->appendPlainText(buffer.data());
+        auto newbufferdata = removebackspacesfromtext(buffer.data());
+        // result += newbufferdata;
+        // result += buffer.data();
+        // textedit->appendPlainText(buffer.data());
+        textedit->appendPlainText(newbufferdata.c_str());
+        // if (ofs.is_open()) {
+            // ofs << buffer.data();
+        // }
         if (ofs.is_open()) {
-            ofs << buffer.data();
+            ofs << newbufferdata;
         }
     }
     // std::cout << result << std::endl;

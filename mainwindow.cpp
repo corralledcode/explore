@@ -591,7 +591,7 @@ void logsyntaxhighlightchange( QPlainTextEdit* textedit ) {
             nestsquare.push_back(i);
         } else if (t.at(i) == '}') {
             p.character = '}';
-            if (!nestcurl.empty()) {
+            if (!nestcurly.empty()) {
                 p.position = nestcurly[nestcurly.size() - 1];
                 pi->parentheses[p.position].position = i;
                 nestcurly.pop_back();
@@ -617,8 +617,12 @@ void doquerytextpositionchanged( const MainWindow* m, QObject* sender) {
 }
 
 void MainWindow::onquerycritedittextchanged() {
-    logsyntaxhighlightchange( qobject_cast<QPlainTextEdit*>(sender()) );
-    // doquerytextpositionchanged(this,sender());
+    if (!querycritedittextchangedmutex) {
+        querycritedittextchangedmutex = true;
+        logsyntaxhighlightchange( qobject_cast<QPlainTextEdit*>(sender()) );
+        doquerytextpositionchanged(this,sender());
+        querycritedittextchangedmutex = false;
+    }
 }
 
 void MainWindow::onquerycriteditcursorpositionchanged() {

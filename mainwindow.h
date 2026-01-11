@@ -96,5 +96,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    bool querycritedittextchangedmutex = false;
 };
 #endif // MAINWINDOW_H

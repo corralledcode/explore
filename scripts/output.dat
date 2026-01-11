@@ -1,0 +1,58 @@
+TIMEDRUN TIMEDRUN1:
+0.00063
+APPLYSETCRITERION APPLYSETCRITERION2:
+Set type output, size == 24
+{	Tuple type output, size == 3
+	<3, 1, 0>,
+ 	Tuple type output, size == 4
+	<3, 1, 2, 0>,
+ 	Tuple type output, size == 3
+	<3, 2, 0>,
+ 	Tuple type output, size == 4
+	<3, 2, 1, 0>,
+ 	Tuple type output, size == 4
+	<3, 2, 0, 1>,
+ 	Tuple type output, size == 3
+	<3, 2, 1>,
+ 	Tuple type output, size == 3
+	<2, 1, 0>,
+ 	Tuple type output, size == 4
+	<2, 1, 3, 0>,
+ 	Tuple type output, size == 3
+	<2, 3, 0>,
+ 	Tuple type output, size == 4
+	<2, 3, 1, 0>,
+ 	Tuple type output, size == 4
+	<2, 3, 0, 1>,
+ 	Tuple type output, size == 3
+	<2, 3, 1>,
+ 	Tuple type output, size == 3
+	<1, 2, 0>,
+ 	Tuple type output, size == 4
+	<1, 2, 3, 0>,
+ 	Tuple type output, size == 3
+	<1, 3, 0>,
+ 	Tuple type output, size == 4
+	<1, 3, 2, 0>,
+ 	Tuple type output, size == 4
+	<1, 3, 0, 2>,
+ 	Tuple type output, size == 3
+	<1, 3, 2>,
+ 	Tuple type output, size == 3
+	<0, 2, 1>,
+ 	Tuple type output, size == 4
+	<0, 2, 3, 1>,
+ 	Tuple type output, size == 3
+	<0, 3, 1>,
+ 	Tuple type output, size == 4
+	<0, 3, 2, 1>,
+ 	Tuple type output, size == 4
+	<0, 3, 1, 2>,
+ 	Tuple type output, size == 3
+	<0, 3, 2>
+}
+Count, average, min, max of set size Set-valued formula BIGCUPD (v IN V, Cyclesvs(v)): 1, 24, 24, 24
+TIMEDRUN TIMEDRUN3:
+0.003374
+TIMEDRUN TimedRunVerbosity:
+9.3e-05

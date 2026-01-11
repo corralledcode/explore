@@ -189,7 +189,7 @@ int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName )
                 while (line[line.size()-1] == '\\') {
                     if (!std::getline(inputFile, temp))
                         break;
-                    line.append( " ");
+                    line.append( " \n");
                     line.append(temp);
                 }
                 if (!childItem)
@@ -563,11 +563,11 @@ void logsyntaxhighlightchange( QPlainTextEdit* textedit ) {
     } else
         pi = new BlockData();
     auto t = textedit->toPlainText();
+
     std::vector<int> nestcurl, nestsquare, nestcurly {};
     pi->parentheses.clear();
     for (int i = 0; i < t.size(); ++i) {
         ParenthesisInfo p;
-
         p.position = -1;
         if (t.at(i) == '(') {
             p.character = '(';

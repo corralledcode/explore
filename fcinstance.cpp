@@ -114,7 +114,15 @@ std::string fcinstance::parse()
                 out.append("ipy=\"" + py + "\" ");
         }
         for (int i = 0; i < queries.size()-1; i++) {
-            out.append( "s" + std::to_string(i+1) + "=\"" + queries[i] + "\" " );
+            std::string q {};
+            auto splitcommand = parsesemicolondelimeted(queries[i],'\n');
+            if (splitcommand.size() > 0) {
+                q += splitcommand[0];
+                for (int n = 1; n < splitcommand.size(); n++) {
+                    q += " \\\n" + splitcommand[n];
+                }
+            }
+            out.append( "s" + std::to_string(i+1) + "=\"" + q + "\" " );
         }
         switch (mt) {
             case mtbool: out.append("s"); break;
@@ -128,7 +136,15 @@ std::string fcinstance::parse()
         if (queries.size() > 1) {
             out.append( std::to_string(queries.size()+1));
         }
-        out.append( "=\"" + queries[queries.size()-1] + "\" all ");
+        std::string q {};
+        auto splitcommand = parsesemicolondelimeted(queries[queries.size()-1],'\n');
+        if (splitcommand.size() > 0) {
+            q += splitcommand[0];
+            for (int n = 1; n < splitcommand.size(); n++) {
+                q += " \\\n" + splitcommand[n];
+            }
+        }
+        out.append( "=\"" + q + "\" all " );
     }
 
     // -g
@@ -786,12 +802,17 @@ int fcinstanceQtbridge::logQuerypostpopulate() {
 
 
     std::string comment = tab->findChild<QPlainTextEdit*>("commenttextedit")->toPlainText().toStdString();
-    if (comment != "")
-        comment = "# " + comment + "\n";
-    std::string command = FLAGCALCINVOKE;
-    command = command + " " + fc.parse().c_str();
-    ofs << comment;
-    ofs << command << std::endl;
+    std::string newcomment = "";
+    if (comment != "") {
+        auto splitcomment = parsesemicolondelimeted(comment,'\n');
+        for (auto c : splitcomment) {
+            newcomment = newcomment + "# " + c + "\n";
+        }
+    }
+    std::string newcommand = FLAGCALCINVOKE;
+    newcommand = newcommand + " " + fc.parse() + "\n";
+    ofs << newcomment;
+    ofs << newcommand;
     if (comment != "")
         ofs << std::endl;
 

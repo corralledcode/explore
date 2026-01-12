@@ -855,8 +855,9 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
     char command[CMDLINEMAXLENGTH];
 
     char cdworkingdirstring[1024] = "cd ";
-    strcat(cdworkingdirstring,DEFAULTDIRECTORY);
-    int len = snprintf(command, sizeof(command),"%s; %s %s", cdworkingdirstring, FLAGCALCEXECUTABLEPATH, fc.parse().c_str() );
+    strcat(cdworkingdirstring,DEFAULTDIRECTORY.c_str());
+    auto executable = FLAGCALCEXECUTABLEPATH + "/" + FLAGCALCEXECUTABLENAME;
+    int len = snprintf(command, sizeof(command),"%s; %s %s", cdworkingdirstring, executable.c_str(), fc.parse().c_str() );
 
     if (len >= CMDLINEMAXLENGTH) {
         throw std::runtime_error("command too long");
@@ -865,7 +866,7 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
     // QApplication::setOverrideCursor(Qt::WaitCursor);
     // QApplication::processEvents();
 #if defined(_WIN32) || defined(_WIN64)
-    FILE* pipe = _popen(FLAGCALCEXECUTABLEPATH, parameters);
+    FILE* pipe = _popen(executable, parameters);
 #else
     // std::cout << command << std::endl;
 

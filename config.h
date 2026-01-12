@@ -19,14 +19,18 @@ inline const std::map<std::string, measuretype>& measuretypestrings
 {"mtuncast", mtuncast}};
 
 #define LONGINT long int
-#define FLAGCALCEXECUTABLEPATH "~/CLionProjects/flagcalc/cmake-build-debug/flagcalc"
-#define FLAGCALCHEADER "PTH=${PTH:-'../bin'}"
-#define FLAGCALCINVOKE "$PTH/flagcalc"
 #define GLOBALCRITCOUNT 3
 #define STRINGDELIMITER ';'
 #define STRINGDELIMITER_STR ";"
 #define CMDLINEMAXLENGTH 131072
-#define DEFAULTDIRECTORY "~/CLionProjects/explore/scripts/"
+
+#define EXPLORECONFIGFILENAME "fcexplore.cfg"
+
+inline std::string FLAGCALCEXECUTABLEPATH = "~/CLionProjects/flagcalc/cmake-build-debug/";
+inline std::string FLAGCALCEXECUTABLENAME = "flagcalc";
+inline std::string FLAGCALCHEADER = "PTH=${PTH:-'../bin'}";
+inline std::string FLAGCALCINVOKE = "$PTH/flagcalc";
+inline std::string DEFAULTDIRECTORY = "~/CLionProjects/explore/scripts/";
 
 
 // ----

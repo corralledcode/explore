@@ -40,6 +40,8 @@ public:
     VerbosityDialog *verbosityDialog {};
     InlineGraphsDialog *inlinegraphsDialog {};
 
+    void opensettingsDialog();
+
 private slots:
 
     void onRunQueryButtonClicked();
@@ -92,6 +94,8 @@ private slots:
 
     void handleverbosityDialogClose(int);
     void handleinlinegraphsDialogClose(int);
+
+    void onsettingsbuttonClicked();
 
 
 private:

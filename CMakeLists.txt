@@ -31,6 +31,7 @@ set(PROJECT_SOURCES
         SyntaxHighlighter.cpp
         SyntaxHighlighter.h
         inlinegraphsdialog.cpp
+        settingsdialog.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

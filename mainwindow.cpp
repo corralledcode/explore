@@ -13,6 +13,7 @@
 #include "SyntaxHighlighter.h"
 #include "config.h"
 #include "inlinegraphsdialog.h"
+#include "settingsdialog.h"
 
 void logsyntaxhighlightchange( QPlainTextEdit* textedit );
 
@@ -56,6 +57,7 @@ MainWindow::MainWindow(fcinstance fcin, QWidget *parent)
 
     connect(ui->logfilecombo, &QComboBox::currentTextChanged, this, &MainWindow::onlogfilecombocurrenttextchanged);
 
+    connect(ui->settingsbutton, &QPushButton::clicked, this, &MainWindow::onsettingsbuttonClicked);
 
 
     // Add an initial tab
@@ -140,6 +142,10 @@ void MainWindow::onlogfileopenbuttonClicked() {
     openexternaleditor(this, ui->logfilecombo->currentText());
 }
 
+void MainWindow::onsettingsbuttonClicked() {
+    opensettingsDialog();
+}
+
 int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName ) {
 
 
@@ -216,7 +222,7 @@ int MainWindow::openQueryFileDialog() {
     QString fileName = QFileDialog::getOpenFileName(
         this,                                        // Parent widget (e.g., your QMainWindow or QWidget)
         tr("Open Shell Script File"),                             // Dialog title
-        DEFAULTDIRECTORY,                      // Default directory (e.g., a specific folder)
+        DEFAULTDIRECTORY.c_str(),                      // Default directory (e.g., a specific folder)
         tr("Query shell scripts (*.sh);;All Files (*.*)")    // File filters
     );
 
@@ -238,6 +244,16 @@ int MainWindow::openQueryFileDialog() {
     return 1;
 }
 
+void MainWindow::opensettingsDialog() {
+
+    auto settingsdialog = new settingsDialog(this);
+
+    connect(settingsdialog, &QDialog::finished, settingsdialog, &QObject::deleteLater);
+
+    settingsdialog->show();
+
+}
+
 void MainWindow::onRemoveToolButtonClicked() {
     auto todelete = ui->scripttree->currentItem();
     if (todelete != nullptr) {
@@ -250,7 +266,7 @@ void MainWindow::onRemoveToolButtonClicked() {
 void MainWindow::onstoredproceduresbuttonClicked() {
     auto fileNames = QFileDialog::getOpenFileNames(this,
                                                     tr("Open stored procedure(s)"), // Dialog title
-                                                    DEFAULTDIRECTORY,     // Default directory
+                                                    DEFAULTDIRECTORY.c_str(),     // Default directory
                                                     tr("Stored procedure files (*.dat);;All files (*.*)"));
     if (!fileNames.isEmpty()) {
         auto c = ui->querytabs->currentWidget()->findChild<QComboBox*>("storedprocedurescombo");
@@ -267,7 +283,7 @@ void MainWindow::onstoredproceduresbuttonClicked() {
 void MainWindow::onpythonbuttonClicked() {
     auto fileNames = QFileDialog::getOpenFileNames(this,
                                                     tr("Open Python script(s)"), // Dialog title
-                                                    DEFAULTDIRECTORY,     // Default directory
+                                                    DEFAULTDIRECTORY.c_str(),     // Default directory
                                                     tr("Python files (*.py);;All files (*.*)"));
     if (!fileNames.isEmpty()) {
         auto c = ui->querytabs->currentWidget()->findChild<QComboBox*>("pythoncombo");
@@ -286,7 +302,7 @@ void MainWindow::onlogfilebuttonClicked() {
     QString filepath = QFileDialog::getSaveFileName(
         this,
         tr("Choose a file to append or create a new script file"),
-        DEFAULTDIRECTORY,
+        DEFAULTDIRECTORY.c_str(),
 #ifdef Q_OS_LINUX
         tr("Shell script files (*.sh);;All Files (*.*)"),
 #else
@@ -310,7 +326,7 @@ void MainWindow::onoutfilebuttonClicked() {
         filepath = QFileDialog::getSaveFileName(
             this,
             tr("Choose a file to overwrite, append or create a new graph output file"),
-            DEFAULTDIRECTORY,
+            DEFAULTDIRECTORY.c_str(),
             tr("Graph data files (*.dat);;All Files (*.*)"),
             nullptr
             );
@@ -318,7 +334,7 @@ void MainWindow::onoutfilebuttonClicked() {
         filepath = QFileDialog::getSaveFileName(
             this,
             tr("Choose a file to overwrite, append or create a new graph output file"),
-            DEFAULTDIRECTORY,
+            DEFAULTDIRECTORY.c_str(),
             tr("Graph data files (*.dat);;All Files (*.*)"),
             nullptr,
             QFileDialog::DontConfirmOverwrite
@@ -381,7 +397,7 @@ void MainWindow::onverbositybuttonClicked() {
 void MainWindow::onoutputfilebuttonClicked() {
     QString fileName = QFileDialog::getSaveFileName(this,
                                             tr("Choose output file"), // Dialog title
-                                            DEFAULTDIRECTORY,     // Default directory
+                                            DEFAULTDIRECTORY.c_str(),     // Default directory
                                             tr("Output files (*.dat);;All files (*.*)"));
     if (!fileName.isEmpty()) {
         outputfilename = fileName.toStdString();
@@ -641,7 +657,7 @@ void MainWindow::onlogfilecombocurrenttextchanged() {
 void MainWindow::ongraphfilesbuttonclicked() {
     auto fileNames = QFileDialog::getOpenFileNames(this,
                                                     tr("Open graph data file(s)"), // Dialog title
-                                                    DEFAULTDIRECTORY,     // Default directory
+                                                    DEFAULTDIRECTORY.c_str(),     // Default directory
                                                     tr("Graph data files (*.dat);;All files (*.*)"));
     if (!fileNames.isEmpty()) {
         auto c = ui->querytabs->currentWidget()->findChild<QComboBox*>("graphfilescombo");

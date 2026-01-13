@@ -192,7 +192,11 @@ int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName )
             }
             if (!eof && !line.empty()) {
                 std::string temp;
+#if defined(_WIN32) || defined(_WIN64)
+                while (line[line.size()-1] == '^') {
+#else
                 while (line[line.size()-1] == '\\') {
+#endif
                     if (!std::getline(inputFile, temp))
                         break;
                     line.append( " \n");

@@ -124,7 +124,12 @@ std::string fcinstance::parse()
             if (splitcommand.size() > 0) {
                 q += splitcommand[0];
                 for (int n = 1; n < splitcommand.size(); n++) {
+#if defined(_WIN32) || defined(_WIN64)
+                    q += " ^\n" + splitcommand[n];
+#else
                     q += " \\\n" + splitcommand[n];
+#endif
+
                 }
             }
             out.append( "s" + std::to_string(i+1) + "=\"" + q + "\" " );
@@ -146,7 +151,11 @@ std::string fcinstance::parse()
         if (splitcommand.size() > 0) {
             q += splitcommand[0];
             for (int n = 1; n < splitcommand.size(); n++) {
+#if defined(_WIN32) || defined(_WIN64)
+                q += " ^\n" + splitcommand[n];
+#else
                 q += " \\\n" + splitcommand[n];
+#endif
             }
         }
         out.append( "=\"" + q + "\" all " );
@@ -920,7 +929,8 @@ std::string ExecCmd(const std::string& cmd,
             break; // Break if read fails or process ends
         }
         buffer[bytesRead] = '\0';
-        output += buffer;
+        auto newbufferdata = removebackspacesfromtext(buffer.data());
+        output += newbufferdata;
     }
 
     // 5. Wait for the process to finish and close handles

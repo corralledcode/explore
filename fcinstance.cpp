@@ -929,7 +929,7 @@ std::string ExecCmd(const std::string& cmd,
             break; // Break if read fails or process ends
         }
         buffer[bytesRead] = '\0';
-        auto newbufferdata = removebackspacesfromtext(buffer.data());
+        auto newbufferdata = removebackspacesfromtext(buffer );
         output += newbufferdata;
     }
 

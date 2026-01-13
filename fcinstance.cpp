@@ -12,8 +12,10 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #include <shellapi.h>
+#endif
 #include <iostream>
 
 inline bool is_number(const std::string& s)
@@ -851,6 +853,8 @@ std::string removebackspacesfromtext( const std::string& s) {
 }
 
 
+#if defined(_WIN32) || defined(_WIN64)
+
 std::string ExecCmd(const std::string& cmd,
     const std::string& workingdirectory) {
     HANDLE hReadPipe, hWritePipe;
@@ -928,6 +932,7 @@ std::string ExecCmd(const std::string& cmd,
     return output;
 }
 
+#endif
 
 
 int fcinstanceQtbridge::runQuerypostpopulate() {

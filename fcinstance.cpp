@@ -12,6 +12,9 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <windows.h>
+#include <shellapi.h>
+#include <iostream>
 
 inline bool is_number(const std::string& s)
 {
@@ -847,6 +850,86 @@ std::string removebackspacesfromtext( const std::string& s) {
     return result;
 }
 
+
+std::string ExecCmd(const std::string& cmd,
+    const std::string& workingdirectory) {
+    HANDLE hReadPipe, hWritePipe;
+    SECURITY_ATTRIBUTES sa;
+    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+    sa.bInheritHandle = TRUE; // Pipes must be inheritable
+    sa.lpSecurityDescriptor = NULL;
+
+    // 1. Create a pipe for the child process's stdout
+    if (!CreatePipe(&hReadPipe, &hWritePipe, &sa, 0)) {
+        return "CreatePipe failed";
+    }
+
+    // Ensure the read handle is not inherited by the child process
+    if (!SetHandleInformation(hReadPipe, HANDLE_FLAG_INHERIT, 0)) {
+        return "SetHandleInformation failed";
+    }
+
+    STARTUPINFO si;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    si.dwFlags = STARTF_USESTDHANDLES;
+    si.hStdOutput = hWritePipe; // Redirect stdout
+    si.hStdError = hWritePipe;  // Redirect stderr
+    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE); // Optional: Inherit stdin
+
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&pi, sizeof(pi));
+
+    // Create a modifiable copy of the command string as CreateProcessW may modify it
+    std::wstring wcmd = std::wstring(cmd.begin(), cmd.end());
+    std::wstring wworkingdirectory = std::wstring(workingdirectory.begin(),workingdirectory.end());
+    // Note: If calling cmd.exe directly, use "/c " or "/k " prefix
+    // Example: std::wstring wcmd = L"cmd.exe /c " + std::wstring(cmd.begin(), cmd.end());
+
+    // 2. Create the child process
+    if (!CreateProcess(
+        NULL,           // lpApplicationName
+        &wcmd[0],       // lpCommandLine (must be a modifiable string)
+        NULL,           // lpProcessAttributes
+        NULL,           // lpThreadAttributes
+        TRUE,           // bInheritHandles (must be TRUE to inherit pipe handles)
+        0,              // dwCreationFlags
+        NULL,           // lpEnvironment
+        &wworkingdirectory[0],           // lpCurrentDirectory
+        &si,            // lpStartupInfo
+        &pi             // lpProcessInformation
+    )) {
+        CloseHandle(hReadPipe);
+        CloseHandle(hWritePipe);
+        return "CreateProcess failed";
+    }
+
+    // 3. Close the write end of the pipe in the parent process
+    CloseHandle(hWritePipe);
+
+    // 4. Read the output from the pipe
+    DWORD bytesRead;
+    CHAR buffer[4096];
+    std::string output;
+    while (true) {
+        if (ReadFile(hReadPipe, buffer, sizeof(buffer) - 1, &bytesRead, NULL) == NULL || bytesRead == 0) {
+            break; // Break if read fails or process ends
+        }
+        buffer[bytesRead] = '\0';
+        output += buffer;
+    }
+
+    // 5. Wait for the process to finish and close handles
+    WaitForSingleObject(pi.hProcess, INFINITE);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+    CloseHandle(hReadPipe);
+
+    return output;
+}
+
+
+
 int fcinstanceQtbridge::runQuerypostpopulate() {
 
 
@@ -856,8 +939,15 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
 
     char cdworkingdirstring[1024] = "cd ";
     strcat(cdworkingdirstring,DEFAULTDIRECTORY.c_str());
+
+#if defined(_WIN32) || defined(_WIN64)
+    auto executable = FLAGCALCEXECUTABLEPATH + "\\" + FLAGCALCEXECUTABLENAME;
+    int len = snprintf(command, sizeof(command),"%s %s", executable.c_str(), fc.parse().c_str() );
+#else
     auto executable = FLAGCALCEXECUTABLEPATH + "/" + FLAGCALCEXECUTABLENAME;
     int len = snprintf(command, sizeof(command),"%s; %s %s", cdworkingdirstring, executable.c_str(), fc.parse().c_str() );
+#endif
+
 
     if (len >= CMDLINEMAXLENGTH) {
         throw std::runtime_error("command too long");
@@ -865,13 +955,16 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
 
     // QApplication::setOverrideCursor(Qt::WaitCursor);
     // QApplication::processEvents();
+
 #if defined(_WIN32) || defined(_WIN64)
-    FILE* pipe = _popen(executable, parameters);
+
+    std::string result = ExecCmd(command, DEFAULTDIRECTORY);
+
+
 #else
     // std::cout << command << std::endl;
 
     FILE* pipe = popen(command, parameters);
-#endif
 
     if (!pipe) {
         throw std::runtime_error("popen() failed!");
@@ -880,6 +973,17 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
 
     std::array<char, 128> buffer;
     std::string result {};
+
+
+    // Read the output a line or buffer at a time and append to the result string
+    while (std::fgets(buffer.data(), buffer.size(), pipe) != nullptr)
+    {
+        auto newbufferdata = removebackspacesfromtext(buffer.data());
+        result += newbufferdata;
+        // result += buffer.data();
+        // textedit->appendPlainText(buffer.data());
+    }
+#endif
 
     auto textedit = ui->outputtextedit;
 
@@ -893,25 +997,20 @@ int fcinstanceQtbridge::runQuerypostpopulate() {
         }
     }
 
-    // Read the output a line or buffer at a time and append to the result string
-    while (std::fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
-        auto newbufferdata = removebackspacesfromtext(buffer.data());
-        // result += newbufferdata;
-        // result += buffer.data();
-        // textedit->appendPlainText(buffer.data());
-        textedit->appendPlainText(newbufferdata.c_str());
-        // if (ofs.is_open()) {
-            // ofs << buffer.data();
-        // }
-        if (ofs.is_open()) {
-            ofs << newbufferdata;
-        }
+
+    textedit->appendPlainText(result.c_str());
+    // if (ofs.is_open()) {
+        // ofs << buffer.data();
+    // }
+    if (ofs.is_open()) {
+        ofs << result;
     }
+
     // std::cout << result << std::endl;
 
     // Close the pipe and get the exit status
 #if defined(_WIN32) || defined(_WIN64)
-    int status = _pclose(pipe);
+    //
 #else
     int status = pclose(pipe);
 #endif

@@ -182,7 +182,7 @@ std::string fcinstance::parse()
 
     }
 
-    std::cout << out << std::endl;
+    // std::cout << out << std::endl;
     return out;
 }
 

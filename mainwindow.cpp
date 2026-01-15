@@ -165,14 +165,14 @@ int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName )
             // std::cout << line << std::endl;
             QTreeWidgetItem *childItem = nullptr;
             bool eof = false;
-            while (!eof && line.rfind("#", 0) == 0) {
+            while (!eof && (line.rfind("#", 0) == 0 || line.rfind("REM", 0) == 0)) {
                 std::string accumulatestring {};
                 accumulatestring += line;
                 bool part = true;
                 while (part && !line.empty()) {
                     part = false;
                     if (std::getline(inputFile, line)) {
-                        part = (line.rfind("#", 0) == 0);
+                        part = (line.rfind("#", 0) == 0 || line.rfind("REM", 0) == 0);
                     } else
                         eof = true;
                     if (part)
@@ -187,7 +187,7 @@ int populatequerysubitems( QTreeWidgetItem * tree, const std::string& fileName )
                         eof = true;
                         break;
                     }
-                if (line.rfind("#", 0) == 0)
+                if (line.rfind("#", 0) == 0 || line.rfind("REM", 0) == 0)
                     tree->addChild(childItem);
             }
             if (!eof && !line.empty()) {

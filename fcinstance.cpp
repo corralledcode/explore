@@ -182,6 +182,7 @@ std::string fcinstance::parse()
 
     }
 
+    std::cout << out << std::endl;
     return out;
 }
 
@@ -820,7 +821,11 @@ int fcinstanceQtbridge::logQuerypostpopulate() {
     if (comment != "") {
         auto splitcomment = parsesemicolondelimeted(comment,'\n');
         for (auto c : splitcomment) {
+#if defined(_WIN32) || defined(_WIN64)
+            newcomment = newcomment + "REM " + c + "\n";
+#else
             newcomment = newcomment + "# " + c + "\n";
+#endif
         }
     }
     std::string newcommand = FLAGCALCINVOKE;

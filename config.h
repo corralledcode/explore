@@ -153,7 +153,8 @@ inline const std::vector<std::string> measures
     "Componentss", "Edgess", "Automs", "Connc", "Ns", "Choices", "Choice2s", "as", "eadjs",
     "e2eadjs", "Epathss", "Pathsusingvsets", "Maps", "Gpathss", "Chip", "Chigreedyp", "Sp",
     "nwalksbetweenp", "Connv", "Connmatrix", "Subp", "CUDAnwalksbetweenp", "CUDAconnv",
-        "GraphonVEg","SubgraphonUg","Gg"};
+        "GraphonVEg","SubgraphonUg","Gg",
+    "embedsgenerousc", "embedst", "embedsgeneroust"};
 
 inline void openexternaleditor( QObject* sender, const QString& fn ) {
     QProcess *process = new QProcess(sender);

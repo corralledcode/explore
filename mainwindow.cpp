@@ -545,6 +545,7 @@ void MainWindow::addNewQueryTab(const bool duplicate)
         cr1->setPlainText(oldpage->findChild<QPlainTextEdit*>("cr1edit")->toPlainText());
         cr2->setPlainText(oldpage->findChild<QPlainTextEdit*>("cr2edit")->toPlainText());
         cr3->setPlainText(oldpage->findChild<QPlainTextEdit*>("cr3edit")->toPlainText());
+        newPage->findChild<QComboBox*>("mtcombobox")->setCurrentText(oldpage->findChild<QComboBox*>("mtcombobox")->currentText());
     }
 
 }
